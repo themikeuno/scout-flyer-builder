@@ -1,31 +1,120 @@
-// SCOUT FLYER BUILDER - Complete React App
-// Professional design matching Troop 111 flyer aesthetic
-
-import React, { useState, useRef } from 'react';
+// SCOUT FLYER BUILDER v3.0 - Professional Design with Official Scouting America Colors
+import React, { useState, useRef, useEffect } from 'react';
 
 // ============================================================================
-// IMAGE LIBRARY - Curated Scout Imagery from Unsplash/Pexels
+// OFFICIAL SCOUTING AMERICA COLOR SCHEMES
+// Source: Scouting America Brand Guidelines, Rev. May 2024
+// ============================================================================
+const COLOR_SCHEMES = {
+  navy: { name: 'Blue & Yellow', primary: '#003F87', accent: '#FCD116', uiAccent: '#FCD116', textOnPrimary: '#FFFFFF', secondaryText: '#B8D4F0', programs: ['Cub Scouts'] },
+  olive: { name: 'Olive & Gold', primary: '#243E2C', accent: '#D4A843', uiAccent: '#D4A843', textOnPrimary: '#FFFFFF', secondaryText: '#C8DFCC', programs: ['Scouts BSA - Boys', 'Scouts BSA - Girls', 'Scouts BSA - Family'] },
+  tan: { name: 'Gray & Tan', primary: '#3D3D3D', accent: '#C9A96E', uiAccent: '#C9A96E', textOnPrimary: '#FFFFFF', secondaryText: '#D6CEBD', programs: [] },
+  green: { name: 'Green & Yellow', primary: '#006B3F', accent: '#FCD116', uiAccent: '#FCD116', textOnPrimary: '#FFFFFF', secondaryText: '#C8EFDB', programs: ['Venturing'] },
+  darkblue: { name: 'Navy & Gold', primary: '#003366', accent: '#CC9900', uiAccent: '#E8B820', textOnPrimary: '#FFFFFF', secondaryText: '#9AB3D5', programs: ['Sea Scouts'] },
+  red: { name: 'Maroon & Gold', primary: '#8B1A2B', accent: '#F0C75E', uiAccent: '#F0C75E', textOnPrimary: '#FFFFFF', secondaryText: '#F5C6CB', programs: [] },
+  custom: { name: 'Custom Colors', primary: '#333333', accent: '#D4A843', uiAccent: '#D4A843', textOnPrimary: '#FFFFFF', secondaryText: '#CCCCCC', programs: [] },
+};
+
+const getRecommendedScheme = (troopType) => {
+  for (const [key, scheme] of Object.entries(COLOR_SCHEMES)) {
+    if (scheme.programs.includes(troopType)) return key;
+  }
+  return 'olive';
+};
+
+// Pre-loaded content templates by program type
+// Sources: scouting.org, ncacscouting.org, Scouting America Brand Guidelines
+
+const PROGRAM_CONTENT = {
+  'Cub Scouts': {
+    whatIsScouting: 'Cub Scouting is a year-round family program for children in kindergarten through fifth grade. Everything in Cub Scouting is designed to keep kids active while building citizenship, character, and personal fitness. Scouts meet in small groups called dens organized by grade level, and all dens come together as a pack for monthly meetings, service projects, camping, and special events like Pinewood Derby. Cub Scouting is fun with a purpose — and it prepares kids to become Scouts.',
+    whyJoinOptions: [
+      'Kids want to have fun. Parents want them to learn positive values and skills that last a lifetime. Cub Scouting delivers both. From camping and hiking to Pinewood Derby and community service, every activity builds confidence, teaches teamwork, and helps kids develop into good citizens. Parents are part of the journey — this is not a drop-off activity, it is a family experience.',
+      'Our pack brings families together through hands-on activities that build character, self-reliance, and lasting friendships. Scouts earn achievement badges, take on new challenges, and prepare for the adventures of Scouts BSA. Compared to sports, music, and other activities, Cub Scouting is one of the most affordable and rewarding programs available — because it is run entirely by parent volunteers who care about the kids.',
+      'Cub Scouting fosters a sense of personal achievement by developing new interests and skills. It strengthens the ability to get along with others, reinforces habits of good citizenship, and improves understanding within the family. Scouts learn to be helpful, to do their best, and to respect nature and their community. Every activity has a purpose — and the result is confident, capable kids ready for what comes next.',
+    ],
+    defaultHighlights: ['Adventure', 'Family Fun', 'Camping', 'Pinewood Derby', 'Hiking', 'Service', 'Friendship', 'Badges', 'Character', 'Citizenship'],
+    defaultActivities: ['Monthly pack meetings & den activities', 'Camping & outdoor adventures', 'Pinewood Derby racing', 'Community service & food drives', 'Field trips & special events', 'Day camp & resident camp', 'Badge & rank advancement', 'Preparation for Scouts BSA'],
+  },
+  'Scouts BSA - Boys': {
+    whatIsScouting: 'Scouts BSA is the flagship Scouting America program for youth ages 11-17. It is a youth-led program where Scouts develop outdoor skills, confidence, and strong character through activities they plan and run themselves — with guidance from trained adult leaders. For over a century, Scouting has built capable, confident people ready to lead in their communities.',
+    whyJoinOptions: [
+      'Our troop is where Scouts build real confidence, develop leadership skills, and gain life skills that last. Scouts plan their own activities, lead their patrols, and learn by doing — from wilderness navigation to public speaking. Every campout, service project, and merit badge is a step toward becoming a capable, self-reliant person.',
+      'Scouting builds leaders. Our troop provides hands-on experiences where Scouts learn to set goals, solve problems, and take responsibility for their actions. Through monthly campouts, high-adventure trips, and community service, Scouts develop the confidence and competence to tackle anything life throws at them.',
+      'Our troop offers a supportive community where Scouts grow into confident, capable people. Through outdoor adventure, merit badges, leadership roles, and service projects, every Scout builds self-reliance, strong character, and lasting friendships. The skills learned here carry into school, careers, and everyday life.',
+    ],
+    defaultHighlights: ['Adventure', 'Leadership', 'Camping', 'Service', 'Hiking', 'Merit Badges', 'Confidence', 'Eagle Scout', 'Teamwork', 'Life Skills'],
+    defaultActivities: ['Monthly camping trips', 'Hiking & backpacking adventures', 'Community service projects', 'Merit badge workshops', 'Summer camp & high adventure', 'Leadership training', 'Outdoor skills development', 'Advancement toward Eagle Scout'],
+  },
+  'Scouts BSA - Girls': {
+    whatIsScouting: 'Scouts BSA is the flagship Scouting America program for youth ages 11-17. It is a youth-led program where Scouts develop outdoor skills, confidence, and strong character through activities they plan and run themselves — with guidance from trained adult leaders. Since 2019, Scouting America has welcomed all-girl troops, offering the same proven program, adventures, and path to Eagle Scout.',
+    whyJoinOptions: [
+      'Our troop is where Scouts build real confidence, develop leadership skills, and gain life skills that last. Scouts plan their own activities, lead their patrols, and learn by doing — from wilderness navigation to public speaking. Every campout, service project, and merit badge is a step toward becoming a capable, self-reliant person.',
+      'Scouting builds leaders. Our troop provides hands-on experiences where Scouts learn to set goals, solve problems, and take responsibility for their actions. Through monthly campouts, high-adventure trips, and community service, Scouts develop the confidence and competence to tackle anything life throws at them.',
+      'Our troop offers a supportive community where Scouts grow into confident, capable people. Through outdoor adventure, merit badges, leadership roles, and service projects, every Scout builds self-reliance, strong character, and lasting friendships. The skills learned here carry into school, careers, and everyday life.',
+    ],
+    defaultHighlights: ['Adventure', 'Leadership', 'Service', 'Hiking', 'Backpacking', 'Confidence', 'Advancement', 'Life Skills', 'Exploration', 'Teamwork'],
+    defaultActivities: ['Monthly camping trips', 'Hiking & backpacking adventures', 'Community service projects', 'Leadership & merit badge training', 'Summer camp experiences', 'Outdoor skills development', 'High-adventure opportunities', 'Advancement toward Eagle Scout'],
+  },
+  'Scouts BSA - Family': {
+    whatIsScouting: 'Scouts BSA is the flagship Scouting America program for youth ages 11-17. It is a youth-led program where Scouts develop outdoor skills, confidence, and strong character through activities they plan and run themselves — with guidance from trained adult leaders. Family troops welcome all Scouts in a shared environment focused on the same proven program of adventure, leadership, and service.',
+    whyJoinOptions: [
+      'Our troop is where Scouts build real confidence, develop leadership skills, and gain life skills that last. Scouts plan their own activities, lead their patrols, and learn by doing — from wilderness navigation to public speaking. Every campout, service project, and merit badge is a step toward becoming a capable, self-reliant person.',
+      'Scouting builds leaders. Our troop provides hands-on experiences where Scouts learn to set goals, solve problems, and take responsibility for their actions. Through monthly campouts, high-adventure trips, and community service, Scouts develop the confidence and competence to tackle anything life throws at them.',
+      'Our troop offers a supportive community where Scouts grow into confident, capable people. Through outdoor adventure, merit badges, leadership roles, and service projects, every Scout builds self-reliance, strong character, and lasting friendships. The skills learned here carry into school, careers, and everyday life.',
+    ],
+    defaultHighlights: ['Adventure', 'Leadership', 'Camping', 'Service', 'Hiking', 'Merit Badges', 'Confidence', 'Eagle Scout', 'Teamwork', 'Life Skills'],
+    defaultActivities: ['Monthly camping trips', 'Hiking & backpacking adventures', 'Community service projects', 'Merit badge workshops', 'Summer camp & high adventure', 'Leadership training', 'Outdoor skills development', 'Advancement toward Eagle Scout'],
+  },
+  'Venturing': {
+    whatIsScouting: 'Venturing is a youth-led Scouting America program for ages 14-20, built around high adventure and leadership. Crews plan and carry out activities based on shared interests — from backpacking and rock climbing to scuba diving and community service. Venturing develops confidence, teamwork, and real-world leadership skills.',
+    whyJoinOptions: [
+      'Our crew is where Scouts push their limits through high-adventure activities, leadership challenges, and meaningful service. Whether it is summiting a peak, navigating whitewater, or leading a community project, Venturers take charge. Join a crew that turns ambition into action and builds skills that matter.',
+      'Venturing is Scouting for those who want more. Our crew offers youth-led adventures that go beyond traditional Scouting — think remote wilderness expeditions, emergency preparedness training, and real leadership experience. If you want challenge, confidence, and adventure, this is your crew.',
+    ],
+    defaultHighlights: ['High Adventure', 'Leadership', 'Confidence', 'Service', 'Exploration', 'Challenge', 'Teamwork', 'Life Skills'],
+    defaultActivities: ['High-adventure expeditions', 'Backpacking & wilderness trips', 'Community service leadership', 'Crew-planned adventures', 'Leadership development', 'Specialty skills training', 'National & regional events'],
+  },
+  'Sea Scouts': {
+    whatIsScouting: 'Sea Scouts is a year-round Scouting America program for ages 14-20 focused on adventure on and around the water. Ships learn seamanship, navigation, boat maintenance, and water safety while developing leadership, teamwork, and a deep appreciation for maritime traditions.',
+    whyJoinOptions: [
+      'Our ship offers Scouts the chance to learn seamanship, navigation, and water safety while building confidence, leadership skills, and lasting friendships. Whether sailing, powerboating, or paddling, Sea Scouts gain hands-on experience on the water and life skills that carry into every part of life.',
+      'Sea Scouting combines adventure on the water with leadership development and community service. Our ship provides hands-on experience with sailing, navigation, and maritime traditions in a youth-led environment where every member has a role and a voice.',
+    ],
+    defaultHighlights: ['Sailing', 'Navigation', 'Leadership', 'Seamanship', 'Adventure', 'Water Safety', 'Teamwork', 'Confidence'],
+    defaultActivities: ['Sailing & powerboating', 'Navigation & seamanship training', 'Water safety certification', 'Maritime traditions & ceremonies', 'Community service on the waterfront', 'Regattas & competitions', 'Ship maintenance & repair'],
+  },
+};
+
+// ============================================================================
+// IMAGE LIBRARY
 // ============================================================================
 const IMAGE_LIBRARY = {
   hero: [
-    { id: 'adventure_1', name: 'Group Hiking Adventure', url: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&h=600&fit=crop', category: 'Hero' },
-    { id: 'adventure_2', name: 'Mountain Trail', url: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=1200&h=600&fit=crop', category: 'Hero' },
-    { id: 'adventure_3', name: 'Forest Exploration', url: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=1200&h=600&fit=crop', category: 'Hero' },
+    { id: 'hero_trail', name: 'Mountain Trail', url: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=1200&h=600&fit=crop', category: 'Hiking' },
+    { id: 'hero_camp', name: 'Camp at Sunset', url: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=1200&h=600&fit=crop', category: 'Camping' },
+    { id: 'hero_forest', name: 'Forest Path', url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=1200&h=600&fit=crop', category: 'Nature' },
+    { id: 'hero_lake', name: 'Lake Adventure', url: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1200&h=600&fit=crop', category: 'Outdoors' },
+    { id: 'hero_mountains', name: 'Mountain Vista', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&h=600&fit=crop', category: 'Mountains' },
   ],
   activity: [
-    { id: 'hiking_1', name: 'Hiking Adventure', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop', category: 'Hiking' },
-    { id: 'leadership_1', name: 'Leadership Training', url: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop', category: 'Leadership' },
-    { id: 'service_1', name: 'Community Service', url: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=400&h=300&fit=crop', category: 'Service' },
-    { id: 'campfire_1', name: 'Campfire Gathering', url: 'https://images.unsplash.com/photo-1476611338391-6f395a0ebc7b?w=400&h=300&fit=crop', category: 'Social' },
-    { id: 'diversity_1', name: 'Diverse Group', url: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&h=300&fit=crop', category: 'Diversity' },
-    { id: 'outdoor_1', name: 'Outdoor Skills', url: 'https://images.unsplash.com/photo-1445522330404-369f8be6050b?w=400&h=300&fit=crop', category: 'Skills' },
-    { id: 'camping_1', name: 'Camping', url: 'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?w=400&h=300&fit=crop', category: 'Camping' },
-    { id: 'nature_1', name: 'Nature Walk', url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=300&fit=crop', category: 'Nature' },
+    { id: 'act_hiking', name: 'Hiking Trail', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop', category: 'Hiking' },
+    { id: 'act_campfire', name: 'Campfire', url: 'https://images.unsplash.com/photo-1475483768296-6163e08872a1?w=600&h=400&fit=crop', category: 'Campfire' },
+    { id: 'act_tent', name: 'Tent Camping', url: 'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?w=600&h=400&fit=crop', category: 'Camping' },
+    { id: 'act_kayak', name: 'Kayaking', url: 'https://images.unsplash.com/photo-1472745433479-4556f22e32c2?w=600&h=400&fit=crop', category: 'Water' },
+    { id: 'act_climbing', name: 'Rock Climbing', url: 'https://images.unsplash.com/photo-1522163182402-834f871fd851?w=600&h=400&fit=crop', category: 'Adventure' },
+    { id: 'act_compass', name: 'Navigation', url: 'https://images.unsplash.com/photo-1452421822248-d4c2b47f0c81?w=600&h=400&fit=crop', category: 'Skills' },
+    { id: 'act_backpack', name: 'Backpacking', url: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=600&h=400&fit=crop', category: 'Backpacking' },
+    { id: 'act_forest', name: 'Forest Walk', url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&h=400&fit=crop', category: 'Nature' },
+    { id: 'act_cooking', name: 'Outdoor Cooking', url: 'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=600&h=400&fit=crop', category: 'Cooking' },
+    { id: 'act_team', name: 'Teamwork', url: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&h=400&fit=crop', category: 'Team' },
+    { id: 'act_stars', name: 'Stargazing', url: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=600&h=400&fit=crop', category: 'Night' },
+    { id: 'act_fishing', name: 'Fishing', url: 'https://images.unsplash.com/photo-1504309092620-4d0ec726efa4?w=600&h=400&fit=crop', category: 'Fishing' },
   ]
 };
 
 // ============================================================================
-// UTILITY FUNCTIONS
+// UTILITIES
 // ============================================================================
 const fileToBase64 = (file) => new Promise((resolve, reject) => {
   const reader = new FileReader();
@@ -36,62 +125,71 @@ const fileToBase64 = (file) => new Promise((resolve, reject) => {
 
 const exportTemplate = (formData) => {
   const template = {
-    metadata: { savedDate: new Date().toISOString(), appVersion: '2.0' },
-    troopBasics: { troopName: formData.troopName, troopType: formData.troopType, ageRange: formData.ageRange, programFocus: formData.programFocus },
-    meetingLocation: { day: formData.meetingDay, time: formData.meetingTime, endTime: formData.meetingEndTime, address: formData.address, locationName: formData.locationName },
+    metadata: { savedDate: new Date().toISOString(), appVersion: '3.0' },
+    troopBasics: { troopName: formData.troopName, troopType: formData.troopType, ageRange: formData.ageRange },
+    meetingLocation: { day: formData.meetingDay, time: formData.meetingTime, endTime: formData.meetingEndTime, frequency: formData.meetingFrequency, frequencyCustom: formData.meetingFrequencyCustom, address: formData.address, locationName: formData.locationName },
     contact: { email: formData.email, website: formData.website, instagram: formData.instagram, phone: formData.phone },
     description: { whyJoin: formData.whyJoin, whatIsScouting: formData.whatIsScouting, highlights: formData.highlights, costs: formData.costs, activities: formData.activities },
-    images: { hero: formData.heroImageRef, activityGallery: formData.activityImagesRef, detailGallery: formData.detailImagesRef }
+    design: { colorScheme: formData.colorScheme, customColors: formData.colorScheme === 'custom' ? COLOR_SCHEMES.custom : null },
+    images: { hero: formData.heroImageRef, activityGallery: formData.activityImagesRef, detailGallery: formData.detailImagesRef, logo: formData.logoImageRef }
   };
   const el = document.createElement('a');
   el.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(template, null, 2)));
-  el.setAttribute('download', `${formData.troopName.replace(/\s+/g, '_')}_Template.json`);
-  el.style.display = 'none';
-  document.body.appendChild(el);
-  el.click();
-  document.body.removeChild(el);
+  el.setAttribute('download', `${formData.troopName.replace(/\s+/g, '_') || 'Scout'}_Template.json`);
+  el.style.display = 'none'; document.body.appendChild(el); el.click(); document.body.removeChild(el);
 };
 
 const importTemplate = (file) => new Promise((resolve, reject) => {
   const reader = new FileReader();
-  reader.onload = (e) => { try { resolve(JSON.parse(e.target.result)); } catch { reject(new Error('Invalid template file')); } };
+  reader.onload = (e) => { try { resolve(JSON.parse(e.target.result)); } catch { reject(new Error('Invalid template')); } };
   reader.onerror = () => reject(new Error('Failed to read file'));
   reader.readAsText(file);
 });
 
 // ============================================================================
-// GENERATE HTML FLYER - Professional Design (Troop 111 Style)
+// GENERATE HTML FLYER
 // ============================================================================
 const generateHTML = (formData) => {
-  const placeholder = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22800%22 height=%22400%22%3E%3Crect fill=%22%23061A3A%22 width=%22800%22 height=%22400%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 fill=%22%23F4B400%22 font-size=%2224%22 text-anchor=%22middle%22 dy=%22.3em%22%3EUpload Image%3C/text%3E%3C/svg%3E';
-  const heroImg = formData.heroImage || placeholder;
-  const actImgs = formData.activityImages.map(img => img || placeholder);
-  const detImgs = formData.detailImages.map(img => img || placeholder);
+  const cs = COLOR_SCHEMES[formData.colorScheme] || COLOR_SCHEMES.olive;
+  const heroImg = formData.heroImage;
+  const actImgs = formData.activityImages.filter(Boolean);
+  const detImgs = formData.detailImages.filter(Boolean);
+  const hasLogo = !!formData.logoImage;
+  const hasHero = !!heroImg;
 
-  // Build the word cloud with alternating styles
   const highlightStyles = [
-    { size: '22px', color: '#F4B400', bold: true },
+    { size: '22px', color: cs.accent, bold: true },
     { size: '18px', color: '#FFFFFF', bold: true },
-    { size: '16px', color: '#8AAED0', bold: true },
-    { size: '24px', color: '#F4B400', bold: true },
+    { size: '16px', color: cs.secondaryText, bold: true },
+    { size: '24px', color: cs.accent, bold: true },
     { size: '17px', color: '#FFFFFF', bold: false },
-    { size: '20px', color: '#8AAED0', bold: true },
-    { size: '15px', color: '#F4B400', bold: true },
+    { size: '20px', color: cs.secondaryText, bold: true },
+    { size: '15px', color: cs.accent, bold: true },
     { size: '19px', color: '#FFFFFF', bold: true },
-    { size: '21px', color: '#8AAED0', bold: false },
-    { size: '16px', color: '#F4B400', bold: true },
+    { size: '21px', color: cs.secondaryText, bold: false },
+    { size: '16px', color: cs.accent, bold: true },
     { size: '18px', color: '#FFFFFF', bold: true },
-    { size: '23px', color: '#8AAED0', bold: true },
+    { size: '23px', color: cs.secondaryText, bold: true },
   ];
 
-  const highlightCloud = (formData.highlights || ['Adventure', 'Leadership', 'Service']).map((h, i) => {
-    const style = highlightStyles[i % highlightStyles.length];
-    return `<span style="font-size:${style.size};color:${style.color};font-weight:${style.bold ? 'bold' : 'normal'};margin:0 12px;display:inline-block;font-family:'Segoe UI',Arial,sans-serif;">${h}</span>`;
+  const highlightCloud = (formData.highlights || []).map((h, i) => {
+    const s = highlightStyles[i % highlightStyles.length];
+    return `<span style="font-size:${s.size};color:${s.color};font-weight:${s.bold?'bold':'normal'};margin:0 12px;display:inline-block;">${h}</span>`;
   }).join('');
 
-  // Activity list for slide 2
-  const defaultActivities = ['Monthly camping trips', 'Hiking & backpacking adventures', 'Community service projects', 'Leadership & merit badge training', 'Summer camp experiences', 'Outdoor skills development'];
-  const activities = formData.activities && formData.activities.length > 0 ? formData.activities : defaultActivities;
+  const defaultActivities = ['Monthly camping trips', 'Hiking & backpacking', 'Community service', 'Leadership training', 'Summer camp', 'Outdoor skills'];
+  const activities = formData.activities?.length > 0 ? formData.activities : defaultActivities;
+
+  // Build photo grid HTML only if images exist
+  const photoGridHTML = actImgs.length > 0 ? `
+  <div style="display:grid;grid-template-columns:repeat(${actImgs.length},1fr);gap:0;padding:0 0.42in;height:1.78in;">
+    ${actImgs.map(img => `<div style="position:relative;overflow:hidden;border-radius:8px;margin:0 4px;"><img src="${img}" style="width:100%;height:100%;object-fit:cover;" alt="Activity"><div style="position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.1);border-radius:8px;"></div></div>`).join('')}
+  </div>` : '';
+
+  const detailPhotosHTML = detImgs.length > 0 ? `
+  <div style="display:grid;grid-template-columns:repeat(${detImgs.length},1fr);gap:0;padding:0.2in 0.42in;height:1.4in;">
+    ${detImgs.map(img => `<div style="position:relative;overflow:hidden;border-radius:8px;margin:0 4px;"><img src="${img}" style="width:100%;height:100%;object-fit:cover;" alt="Activity"><div style="position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.1);border-radius:8px;"></div></div>`).join('')}
+  </div>` : '';
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -103,113 +201,69 @@ const generateHTML = (formData) => {
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Inter','Segoe UI',Arial,sans-serif;background:#f0f0f0;}
-
 .slide{width:8.5in;height:11in;margin:0.25in auto;overflow:hidden;position:relative;box-shadow:0 4px 20px rgba(0,0,0,0.15);}
 
-/* ===== SLIDE 1 ===== */
-.slide-1{background:#061A3A;color:#fff;display:flex;flex-direction:column;}
-
-.hero-section{position:relative;width:100%;height:5.6in;overflow:hidden;}
-.hero-section img{width:100%;height:100%;object-fit:cover;}
-.hero-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(180deg,rgba(6,26,58,0.35) 0%,rgba(6,26,58,0.6) 100%);}
-
-.hero-text{position:absolute;bottom:0.6in;left:0.6in;z-index:2;}
+.slide-1{background:${cs.primary};color:${cs.textOnPrimary};display:flex;flex-direction:column;}
+.hero-section{position:relative;width:100%;${hasHero ? 'height:5.6in;' : 'height:2.5in;'}overflow:hidden;}
+${hasHero ? `.hero-section img{width:100%;height:100%;object-fit:cover;}` : ''}
+.hero-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:${hasHero ? 'linear-gradient(180deg,rgba(0,0,0,0.25) 0%,rgba(0,0,0,0.55) 100%)' : cs.primary};display:flex;flex-direction:column;justify-content:flex-end;padding:0.6in;}
 .hero-tagline{font-size:28pt;font-weight:800;color:#fff;text-shadow:2px 3px 6px rgba(0,0,0,0.5);letter-spacing:-0.5px;}
-.hero-subtitle{font-size:10.5pt;font-weight:600;color:#EEF6FF;margin-top:6px;letter-spacing:1px;}
-
+.hero-subtitle{font-size:10.5pt;font-weight:600;color:${cs.secondaryText};margin-top:6px;letter-spacing:1px;}
 .logo-area{position:absolute;top:0.1in;right:0.1in;width:2.4in;height:2.4in;z-index:3;}
 .logo-area img{width:100%;height:100%;object-fit:contain;}
-.logo-placeholder{width:100%;height:100%;border:2px dashed rgba(255,255,255,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.4);font-size:11px;text-align:center;padding:20px;}
-
 .word-cloud{padding:0.25in 0.4in;text-align:center;line-height:2.2;min-height:0.9in;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;}
-
-.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;padding:0 0.42in;height:1.78in;}
-.photo-grid-item{position:relative;overflow:hidden;border-radius:8px;margin:0 4px;}
-.photo-grid-item img{width:100%;height:100%;object-fit:cover;}
-.photo-grid-item::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(6,26,58,0.15);border-radius:8px;}
-
 .meeting-bar{margin:0.15in 0.42in;padding:0.22in 0.3in;background:rgba(255,255,255,0.08);border-radius:8px;display:flex;align-items:center;}
 .meeting-left{flex:0 0 auto;padding-right:0.3in;border-right:2px solid rgba(255,255,255,0.2);}
 .meeting-right{padding-left:0.3in;}
-.meeting-label{font-size:9pt;font-weight:700;color:#F4B400;text-transform:uppercase;letter-spacing:1px;}
+.meeting-label{font-size:9pt;font-weight:700;color:${cs.accent};text-transform:uppercase;letter-spacing:1px;}
 .meeting-value{font-size:11pt;font-weight:700;color:#fff;margin-top:2px;}
-
 .contact-bar{margin:0.1in 0.42in 0.15in;text-align:center;padding:0.15in;font-size:9pt;color:rgba(255,255,255,0.7);}
-.contact-bar a{color:#F4B400;text-decoration:none;font-weight:600;}
+.contact-bar a{color:${cs.accent};text-decoration:none;font-weight:600;}
 
-/* ===== SLIDE 2 ===== */
 .slide-2{background:#F8F9FA;display:flex;flex-direction:column;}
-
-.s2-header{background:#061A3A;padding:0.25in 0.5in;display:flex;align-items:center;}
-.s2-header-text{flex:1;}
-.s2-title{font-size:22pt;font-weight:800;color:#fff;}
-.s2-subtitle{font-size:10pt;color:#D8E8FF;margin-top:4px;font-weight:600;}
+.s2-header{background:${cs.primary};padding:0.3in 0.5in;display:flex;align-items:center;}
+.s2-title{font-size:22pt;font-weight:800;color:#fff;flex:1;}
+.s2-subtitle{font-size:10pt;color:${cs.secondaryText};margin-top:4px;font-weight:600;}
 .s2-logo{width:0.8in;height:0.8in;}
 .s2-logo img{width:100%;height:100%;object-fit:contain;}
-
 .s2-cards{display:grid;grid-template-columns:1fr 1fr;gap:0.2in;padding:0.3in 0.42in 0.2in;}
 .s2-card{background:#fff;border-radius:12px;padding:0.3in;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
-.s2-card-title{font-size:13pt;font-weight:700;color:#061A3A;margin-bottom:0.08in;padding-bottom:0.08in;border-bottom:2px solid #F4B400;}
+.s2-card-title{font-size:13pt;font-weight:700;color:${cs.primary};margin-bottom:0.08in;padding-bottom:0.08in;border-bottom:2px solid ${cs.accent};}
 .s2-card p{font-size:9.5pt;color:#1F2937;line-height:1.55;}
-.s2-card ul{font-size:9.5pt;color:#1F2937;line-height:1.7;padding-left:0.2in;}
-.s2-card li{margin-bottom:2px;}
-
 .s2-info-cards{display:grid;grid-template-columns:1fr 1fr;gap:0.2in;padding:0 0.42in 0.2in;}
-.s2-info-card{background:#061A3A;border-radius:12px;padding:0.25in;color:#fff;}
-.s2-info-title{font-size:11pt;font-weight:700;color:#F4B400;margin-bottom:0.08in;}
-.s2-info-card ul{font-size:9pt;line-height:1.6;padding-left:0.15in;color:#D8E8FF;}
+.s2-info-card{background:${cs.primary};border-radius:12px;padding:0.25in;color:#fff;}
+.s2-info-title{font-size:11pt;font-weight:700;color:${cs.accent};margin-bottom:0.08in;}
+.s2-info-card ul{font-size:9pt;line-height:1.6;padding-left:0.15in;color:${cs.secondaryText};}
 .s2-info-card li{margin-bottom:2px;}
-
-.s2-contact{margin:0 0.42in;padding:0.25in 0.3in;background:#061A3A;border-radius:12px;display:flex;align-items:flex-start;}
+.s2-contact{margin:0 0.42in;padding:0.25in 0.3in;background:${cs.primary};border-radius:12px;display:flex;align-items:flex-start;}
 .s2-contact-left{flex:0 0 45%;}
 .s2-contact-heading{font-size:14pt;font-weight:800;color:#fff;}
-.s2-contact-sub{font-size:8.5pt;color:#D8E8FF;margin-top:4px;}
+.s2-contact-sub{font-size:8.5pt;color:${cs.secondaryText};margin-top:4px;}
 .s2-contact-divider{width:2px;background:rgba(255,255,255,0.2);align-self:stretch;margin:0 0.2in;}
 .s2-contact-right{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.s2-contact-label{font-size:7.5pt;font-weight:700;color:#F4B400;text-transform:uppercase;letter-spacing:1px;}
+.s2-contact-label{font-size:7.5pt;font-weight:700;color:${cs.accent};text-transform:uppercase;letter-spacing:1px;}
 .s2-contact-value{font-size:9.5pt;font-weight:700;color:#fff;margin-top:1px;word-break:break-all;}
-
-.s2-photos{display:grid;grid-template-columns:repeat(3,1fr);gap:0;padding:0.2in 0.42in;height:1.4in;}
-.s2-photo-item{position:relative;overflow:hidden;border-radius:8px;margin:0 4px;}
-.s2-photo-item img{width:100%;height:100%;object-fit:cover;}
-.s2-photo-item::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(6,26,58,0.12);border-radius:8px;}
-
-.s2-footer{background:#061A3A;padding:0.12in 0.42in;display:flex;justify-content:space-between;align-items:center;margin-top:auto;}
+.s2-footer{background:${cs.primary};padding:0.12in 0.42in;display:flex;justify-content:space-between;align-items:center;margin-top:auto;}
 .s2-footer-left{font-size:8.5pt;font-weight:700;color:#fff;}
 .s2-footer-right{font-size:8.5pt;font-weight:700;color:#fff;text-align:right;}
-.s2-welcome{text-align:center;padding:0.08in;font-size:9pt;font-weight:600;color:#061A3A;font-style:italic;}
+.s2-welcome{text-align:center;padding:0.08in;font-size:9pt;font-weight:600;color:${cs.primary};font-style:italic;}
 
-@media print{
-  body{background:#fff;margin:0;padding:0;}
-  .slide{box-shadow:none;margin:0;width:100%;height:100%;}
-  @page{size:8.5in 11in;margin:0;}
-}
+@media print{body{background:#fff;margin:0;padding:0;}.slide{box-shadow:none;margin:0;width:100%;height:100%;}@page{size:8.5in 11in;margin:0;}}
 </style>
 </head>
 <body>
 
-<!-- SLIDE 1: HERO -->
 <div class="slide slide-1">
   <div class="hero-section">
-    <img src="${heroImg}" alt="${formData.troopName || 'Scout Troop'}">
-    <div class="hero-overlay"></div>
-    <div class="hero-text">
+    ${hasHero ? `<img src="${heroImg}" alt="${formData.troopName}">` : ''}
+    <div class="hero-overlay">
       <div class="hero-tagline">Adventure starts here.</div>
       <div class="hero-subtitle">Scouting America &nbsp;•&nbsp; ${formData.troopType || 'Scouts BSA'} ${formData.ageRange || 'Ages 11-17'}</div>
     </div>
-    <div class="logo-area">
-      ${formData.logoImage ? `<img src="${formData.logoImage}" alt="Troop Logo">` : `<div class="logo-placeholder">Upload<br>Troop Logo</div>`}
-    </div>
+    ${hasLogo ? `<div class="logo-area"><img src="${formData.logoImage}" alt="Troop Logo"></div>` : ''}
   </div>
-
   <div class="word-cloud">${highlightCloud}</div>
-
-  <div class="photo-grid">
-    <div class="photo-grid-item"><img src="${actImgs[0]}" alt="Activity 1"></div>
-    <div class="photo-grid-item"><img src="${actImgs[1]}" alt="Activity 2"></div>
-    <div class="photo-grid-item"><img src="${actImgs[2]}" alt="Activity 3"></div>
-  </div>
-
+  ${photoGridHTML}
   <div class="meeting-bar">
     <div class="meeting-left">
       <div class="meeting-label">${formData.meetingDay || 'Monday'} Nights</div>
@@ -220,25 +274,20 @@ body{font-family:'Inter','Segoe UI',Arial,sans-serif;background:#f0f0f0;}
       <div class="meeting-value">${formData.address || '123 Main St'}</div>
     </div>
   </div>
-
   <div class="contact-bar">
     Questions? <a href="mailto:${formData.email || ''}">${formData.email || 'email@troop.org'}</a>
     ${formData.instagram ? `&nbsp;&nbsp;|&nbsp;&nbsp;Instagram: <a href="#">${formData.instagram}</a>` : ''}
   </div>
 </div>
 
-<!-- SLIDE 2: DETAILS -->
 <div class="slide slide-2">
   <div class="s2-header">
-    <div class="s2-header-text">
+    <div>
       <div class="s2-title">${formData.troopName || 'Scout Troop'} at a Glance</div>
       <div class="s2-subtitle">A quick guide for new Scouts and families</div>
     </div>
-    <div class="s2-logo">
-      ${formData.logoImage ? `<img src="${formData.logoImage}" alt="Logo">` : ''}
-    </div>
+    ${hasLogo ? `<div class="s2-logo"><img src="${formData.logoImage}" alt="Logo"></div>` : ''}
   </div>
-
   <div class="s2-cards">
     <div class="s2-card">
       <div class="s2-card-title">What is Scouting America?</div>
@@ -246,10 +295,9 @@ body{font-family:'Inter','Segoe UI',Arial,sans-serif;background:#f0f0f0;}
     </div>
     <div class="s2-card">
       <div class="s2-card-title">Why Join ${formData.troopName || 'Us'}?</div>
-      <p>${formData.whyJoin || 'We offer a supportive, inclusive community focused on leadership development, outdoor adventure, and lifelong friendships. Our scouts grow into confident, capable young adults.'}</p>
+      <p>${formData.whyJoin || 'We offer a supportive, inclusive community focused on leadership development, outdoor adventure, and lifelong friendships.'}</p>
     </div>
   </div>
-
   <div class="s2-info-cards">
     <div class="s2-info-card">
       <div class="s2-info-title">When & How Much?</div>
@@ -262,12 +310,9 @@ body{font-family:'Inter','Segoe UI',Arial,sans-serif;background:#f0f0f0;}
     </div>
     <div class="s2-info-card">
       <div class="s2-info-title">What Do Scouts Do?</div>
-      <ul>
-        ${activities.map(a => `<li>${a}</li>`).join('')}
-      </ul>
+      <ul>${activities.map(a => `<li>${a}</li>`).join('')}</ul>
     </div>
   </div>
-
   <div class="s2-contact">
     <div class="s2-contact-left">
       <div class="s2-contact-heading">Interested in<br>Learning More?</div>
@@ -275,35 +320,21 @@ body{font-family:'Inter','Segoe UI',Arial,sans-serif;background:#f0f0f0;}
     </div>
     <div class="s2-contact-divider"></div>
     <div class="s2-contact-right">
-      <div>
-        <div class="s2-contact-label">Email</div>
-        <div class="s2-contact-value">${formData.email || 'email@troop.org'}</div>
-      </div>
-      <div>
-        <div class="s2-contact-label">Website</div>
-        <div class="s2-contact-value">${formData.website || 'www.troop.org'}</div>
-      </div>
+      <div><div class="s2-contact-label">Email</div><div class="s2-contact-value">${formData.email || 'email@troop.org'}</div></div>
+      ${formData.website ? `<div><div class="s2-contact-label">Website</div><div class="s2-contact-value">${formData.website}</div></div>` : ''}
       ${formData.instagram ? `<div><div class="s2-contact-label">Instagram</div><div class="s2-contact-value">${formData.instagram}</div></div>` : ''}
       ${formData.phone ? `<div><div class="s2-contact-label">Phone</div><div class="s2-contact-value">${formData.phone}</div></div>` : ''}
     </div>
   </div>
-
   <div class="s2-welcome">Prospective Scouts and families are always welcome.</div>
-
-  <div class="s2-photos">
-    <div class="s2-photo-item"><img src="${detImgs[0]}" alt="Activity"></div>
-    <div class="s2-photo-item"><img src="${detImgs[1]}" alt="Activity"></div>
-    <div class="s2-photo-item"><img src="${detImgs[2]}" alt="Activity"></div>
-  </div>
-
+  ${detailPhotosHTML}
   <div class="s2-footer">
     <div class="s2-footer-left">${formData.email || ''}</div>
     <div class="s2-footer-right">${formData.troopName || 'Scout Troop'}${formData.address ? ', ' + formData.address.split(',').slice(-2).join(',').trim() : ''}</div>
   </div>
 </div>
 
-</body>
-</html>`;
+</body></html>`;
 };
 
 // ============================================================================
@@ -312,11 +343,12 @@ body{font-family:'Inter','Segoe UI',Arial,sans-serif;background:#f0f0f0;}
 const ScoutFlyerBuilder = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    troopName: '', troopType: 'Scouts BSA - Girls', ageRange: 'Ages 11-17', programFocus: '',
-    meetingDay: 'Monday', meetingTime: '7:00', meetingEndTime: '8:30 PM', address: '', locationName: '',
+    troopName: '', troopType: 'Scouts BSA - Girls', ageRange: 'Ages 11-17',
+    meetingDay: 'Monday', meetingTime: '7:00', meetingEndTime: '8:30 PM', meetingFrequency: 'Weekly', meetingFrequencyCustom: '', address: '', locationName: '',
     email: '', website: '', instagram: '', phone: '',
     whyJoin: '', whatIsScouting: '', highlights: ['Adventure', 'Leadership', 'Service', 'Friendship', 'Campfires', 'Hiking', 'Advancement', 'Teamwork'], costs: '',
     activities: ['Monthly camping trips', 'Hiking & backpacking adventures', 'Community service projects', 'Leadership & merit badge training', 'Summer camp experiences', 'Outdoor skills development'],
+    colorScheme: 'olive',
     heroImage: '', heroImageRef: '', logoImage: '', logoImageRef: '',
     activityImages: [null, null, null], activityImagesRef: ['', '', ''],
     detailImages: [null, null, null], detailImagesRef: ['', '', ''],
@@ -327,27 +359,27 @@ const ScoutFlyerBuilder = () => {
   const [activityInput, setActivityInput] = useState('');
   const templateInputRef = useRef(null);
 
+  // Auto-recommend color scheme and age/grade range when troop type changes
+  useEffect(() => {
+    const rangeMap = { 'Cub Scouts': 'Kindergarten - 5th Grade', 'Scouts BSA - Boys': 'Ages 11-17', 'Scouts BSA - Girls': 'Ages 11-17', 'Scouts BSA - Family': 'Ages 11-17', 'Venturing': 'Ages 14-20', 'Sea Scouts': 'Ages 14-20' };
+    const recommended = getRecommendedScheme(formData.troopType);
+    const range = rangeMap[formData.troopType] || 'Ages 11-17';
+    const content = PROGRAM_CONTENT[formData.troopType];
+    setFormData(prev => ({
+      ...prev, colorScheme: recommended, ageRange: range,
+      highlights: content?.defaultHighlights || prev.highlights,
+      activities: content?.defaultActivities || prev.activities,
+    }));
+  }, [formData.troopType]);
+
   const handleInputChange = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
-
-  const addHighlight = () => {
-    if (highlightInput.trim()) {
-      setFormData(prev => ({ ...prev, highlights: [...prev.highlights, highlightInput.trim()] }));
-      setHighlightInput('');
-    }
-  };
-  const removeHighlight = (index) => setFormData(prev => ({ ...prev, highlights: prev.highlights.filter((_, i) => i !== index) }));
-
-  const addActivity = () => {
-    if (activityInput.trim()) {
-      setFormData(prev => ({ ...prev, activities: [...prev.activities, activityInput.trim()] }));
-      setActivityInput('');
-    }
-  };
-  const removeActivity = (index) => setFormData(prev => ({ ...prev, activities: prev.activities.filter((_, i) => i !== index) }));
+  const addHighlight = () => { if (highlightInput.trim()) { setFormData(prev => ({ ...prev, highlights: [...prev.highlights, highlightInput.trim()] })); setHighlightInput(''); } };
+  const removeHighlight = (i) => setFormData(prev => ({ ...prev, highlights: prev.highlights.filter((_, idx) => idx !== i) }));
+  const addActivity = () => { if (activityInput.trim()) { setFormData(prev => ({ ...prev, activities: [...prev.activities, activityInput.trim()] })); setActivityInput(''); } };
+  const removeActivity = (i) => setFormData(prev => ({ ...prev, activities: prev.activities.filter((_, idx) => idx !== i) }));
 
   const handleImageUpload = async (e, imageType, index = null) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const file = e.target.files?.[0]; if (!file) return;
     try {
       const base64 = await fileToBase64(file);
       if (imageType === 'hero') setFormData(prev => ({ ...prev, heroImage: base64, heroImageRef: 'custom' }));
@@ -388,25 +420,26 @@ const ScoutFlyerBuilder = () => {
   };
 
   const handleTemplateLoad = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const file = e.target.files?.[0]; if (!file) return;
     try {
       const t = await importTemplate(file);
       setFormData(prev => ({
         ...prev, ...t.troopBasics,
-        meetingDay: t.meetingLocation.day, meetingTime: t.meetingLocation.time, meetingEndTime: t.meetingLocation.endTime || '8:30 PM',
+        meetingDay: t.meetingLocation.day, meetingTime: t.meetingLocation.time, meetingEndTime: t.meetingLocation.endTime || '8:30 PM', meetingFrequency: t.meetingLocation.frequency || 'Weekly', meetingFrequencyCustom: t.meetingLocation.frequencyCustom || '',
         address: t.meetingLocation.address, locationName: t.meetingLocation.locationName || '',
         email: t.contact.email, website: t.contact.website, instagram: t.contact.instagram, phone: t.contact.phone,
         whyJoin: t.description.whyJoin, whatIsScouting: t.description.whatIsScouting, highlights: t.description.highlights, costs: t.description.costs,
         activities: t.description.activities || prev.activities,
-        heroImageRef: t.images.hero, activityImagesRef: t.images.activityGallery, detailImagesRef: t.images.detailGallery,
+        colorScheme: t.design?.colorScheme || getRecommendedScheme(t.troopBasics.troopType),
+        heroImageRef: t.images.hero, activityImagesRef: t.images.activityGallery, detailImagesRef: t.images.detailGallery, logoImageRef: t.images.logo || '',
       }));
+      if (t.design?.customColors) { Object.assign(COLOR_SCHEMES.custom, t.design.customColors); }
       alert('Template loaded! Please re-select or re-upload images.');
     } catch (error) { alert('Failed to load template: ' + error.message); }
   };
 
   // ============================================================================
-  // IMAGE PICKER COMPONENT
+  // IMAGE PICKER
   // ============================================================================
   const ImageSlot = ({ label, imageType, index, currentRef, currentImage }) => (
     <div style={{ marginBottom: '12px', padding: '10px', background: '#f8f8f8', borderRadius: '6px' }}>
@@ -414,7 +447,7 @@ const ScoutFlyerBuilder = () => {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px', marginBottom: '8px' }}>
         {(imageType === 'hero' ? IMAGE_LIBRARY.hero : IMAGE_LIBRARY.activity).map(img => (
           <button key={img.id} onClick={() => selectFromLibrary(img.id, imageType, index)}
-            style={{ border: currentRef === img.id ? '3px solid #F4B400' : '2px solid #ddd', padding: 0, cursor: 'pointer', borderRadius: '6px', overflow: 'hidden', height: '50px' }}>
+            style={{ border: currentRef === img.id ? `3px solid ${COLOR_SCHEMES[formData.colorScheme]?.uiAccent || '#F4B400'}` : '2px solid #ddd', padding: 0, cursor: 'pointer', borderRadius: '6px', overflow: 'hidden', height: '50px' }}>
             <img src={img.url} alt={img.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           </button>
         ))}
@@ -425,6 +458,68 @@ const ScoutFlyerBuilder = () => {
   );
 
   // ============================================================================
+  // COLOR SCHEME PICKER
+  // ============================================================================
+  const ColorSchemePicker = () => {
+    const recommended = getRecommendedScheme(formData.troopType);
+    const handleCustomColor = (field, value) => {
+      const current = COLOR_SCHEMES.custom;
+      COLOR_SCHEMES.custom = { ...current, [field]: value };
+      if (field === 'accent') COLOR_SCHEMES.custom.uiAccent = value;
+      setFormData(prev => ({ ...prev, colorScheme: 'custom' }));
+    };
+    return (
+      <div style={{ marginBottom: '16px' }}>
+        <label style={styles.label}>Color Scheme</label>
+        <p style={{ fontSize: '11px', color: '#666', marginBottom: '8px' }}>
+          Recommended for {formData.troopType}: <strong>{COLOR_SCHEMES[recommended]?.name}</strong>
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+          {Object.entries(COLOR_SCHEMES).filter(([key]) => key !== 'custom').map(([key, scheme]) => (
+            <button key={key} onClick={() => handleInputChange('colorScheme', key)}
+              style={{
+                padding: '8px', border: formData.colorScheme === key ? '3px solid #333' : '2px solid #ddd',
+                borderRadius: '8px', cursor: 'pointer', background: '#fff', textAlign: 'left'
+              }}>
+              <div style={{ display: 'flex', gap: '3px', marginBottom: '4px' }}>
+                <div style={{ width: '20px', height: '20px', borderRadius: '4px', background: scheme.primary }}></div>
+                <div style={{ width: '20px', height: '20px', borderRadius: '4px', background: scheme.accent }}></div>
+              </div>
+              <div style={{ fontSize: '10px', fontWeight: 600, color: '#333' }}>{scheme.name}</div>
+              {key === recommended && <div style={{ fontSize: '8px', color: '#006B3F', fontWeight: 700 }}>★ Recommended</div>}
+            </button>
+          ))}
+        </div>
+        <div style={{ marginTop: '10px', padding: '10px', background: formData.colorScheme === 'custom' ? '#f0f7ff' : '#f8f8f8', border: formData.colorScheme === 'custom' ? '2px solid #333' : '1px solid #ddd', borderRadius: '8px' }}>
+          <div style={{ fontSize: '12px', fontWeight: 600, marginBottom: '6px', color: '#333' }}>Custom Colors</div>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <div>
+              <label style={{ fontSize: '10px', color: '#666', display: 'block' }}>Primary</label>
+              <input type="color" value={COLOR_SCHEMES.custom.primary} onChange={(e) => handleCustomColor('primary', e.target.value)}
+                style={{ width: '40px', height: '30px', border: '1px solid #ddd', borderRadius: '4px', cursor: 'pointer', padding: 0 }} />
+            </div>
+            <div>
+              <label style={{ fontSize: '10px', color: '#666', display: 'block' }}>Accent</label>
+              <input type="color" value={COLOR_SCHEMES.custom.accent} onChange={(e) => handleCustomColor('accent', e.target.value)}
+                style={{ width: '40px', height: '30px', border: '1px solid #ddd', borderRadius: '4px', cursor: 'pointer', padding: 0 }} />
+            </div>
+            <div>
+              <label style={{ fontSize: '10px', color: '#666', display: 'block' }}>Light Text</label>
+              <input type="color" value={COLOR_SCHEMES.custom.secondaryText} onChange={(e) => handleCustomColor('secondaryText', e.target.value)}
+                style={{ width: '40px', height: '30px', border: '1px solid #ddd', borderRadius: '4px', cursor: 'pointer', padding: 0 }} />
+            </div>
+            <div style={{ flex: 1, display: 'flex', gap: '3px', alignItems: 'center', justifyContent: 'flex-end' }}>
+              <div style={{ width: '32px', height: '32px', borderRadius: '6px', background: COLOR_SCHEMES.custom.primary }}></div>
+              <div style={{ width: '32px', height: '32px', borderRadius: '6px', background: COLOR_SCHEMES.custom.accent }}></div>
+              <div style={{ width: '32px', height: '32px', borderRadius: '6px', background: COLOR_SCHEMES.custom.secondaryText, border: '1px solid #ddd' }}></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // ============================================================================
   // FORM STEPS
   // ============================================================================
   const renderStep = () => {
@@ -433,11 +528,12 @@ const ScoutFlyerBuilder = () => {
         <div>
           <h2 style={styles.stepTitle}>Step 1: Troop Basics</h2>
           <div style={styles.field}><label style={styles.label}>Troop Name *</label><input style={styles.input} placeholder="e.g., Troop 111" value={formData.troopName} onChange={(e) => handleInputChange('troopName', e.target.value)} /></div>
-          <div style={styles.field}><label style={styles.label}>Troop Type</label>
+          <div style={styles.field}><label style={styles.label}>Program Type</label>
             <select style={styles.input} value={formData.troopType} onChange={(e) => handleInputChange('troopType', e.target.value)}>
-              <option>Scouts BSA - Girls</option><option>Scouts BSA - Boys</option><option>Cub Scouts</option><option>Venturing</option><option>Sea Scouts</option>
+              <option>Scouts BSA - Girls</option><option>Scouts BSA - Boys</option><option>Scouts BSA - Family</option><option>Cub Scouts</option><option>Venturing</option><option>Sea Scouts</option>
             </select></div>
-          <div style={styles.field}><label style={styles.label}>Age Range</label><input style={styles.input} placeholder="Ages 11-17" value={formData.ageRange} onChange={(e) => handleInputChange('ageRange', e.target.value)} /></div>
+          <div style={styles.field}><label style={styles.label}>Age/Grade Range</label><input style={styles.input} placeholder="e.g., Ages 11-17 or Kindergarten - 5th Grade" value={formData.ageRange} onChange={(e) => handleInputChange('ageRange', e.target.value)} /></div>
+          <ColorSchemePicker />
         </div>
       );
       case 2: return (
@@ -447,6 +543,15 @@ const ScoutFlyerBuilder = () => {
             <select style={styles.input} value={formData.meetingDay} onChange={(e) => handleInputChange('meetingDay', e.target.value)}>
               {['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].map(d => <option key={d}>{d}</option>)}
             </select></div>
+          <div style={styles.field}><label style={styles.label}>Meeting Frequency</label>
+            <select style={styles.input} value={formData.meetingFrequency} onChange={(e) => handleInputChange('meetingFrequency', e.target.value)}>
+              <option>Weekly</option><option>Twice a Month</option><option>Monthly</option><option>Custom</option>
+            </select></div>
+          {formData.meetingFrequency === 'Custom' && (
+            <div style={styles.field}><label style={styles.label}>Custom Frequency</label>
+              <input style={styles.input} placeholder="e.g., 1st and 3rd Wednesdays" value={formData.meetingFrequencyCustom} onChange={(e) => handleInputChange('meetingFrequencyCustom', e.target.value)} />
+            </div>
+          )}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
             <div style={styles.field}><label style={styles.label}>Start Time</label><input style={styles.input} placeholder="7:00" value={formData.meetingTime} onChange={(e) => handleInputChange('meetingTime', e.target.value)} /></div>
             <div style={styles.field}><label style={styles.label}>End Time</label><input style={styles.input} placeholder="8:30 PM" value={formData.meetingEndTime} onChange={(e) => handleInputChange('meetingEndTime', e.target.value)} /></div>
@@ -467,35 +572,58 @@ const ScoutFlyerBuilder = () => {
       case 4: return (
         <div>
           <h2 style={styles.stepTitle}>Step 4: Content</h2>
-          <div style={styles.field}><label style={styles.label}>Why Join Your Troop?</label>
-            <textarea style={{ ...styles.input, minHeight: '80px' }} placeholder="Young women ages 11-17 who want to build leadership skills, explore the outdoors..." value={formData.whyJoin} onChange={(e) => handleInputChange('whyJoin', e.target.value)} /></div>
-          <div style={styles.field}><label style={styles.label}>What is Scouting America?</label>
-            <textarea style={{ ...styles.input, minHeight: '80px' }} placeholder="Scouting America is a youth-led organization..." value={formData.whatIsScouting} onChange={(e) => handleInputChange('whatIsScouting', e.target.value)} /></div>
+          <div style={styles.field}>
+            <label style={styles.label}>Why Join Your Troop?</label>
+            {PROGRAM_CONTENT[formData.troopType]?.whyJoinOptions && (
+              <div style={{ marginBottom: '8px' }}>
+                <p style={{ fontSize: '11px', color: '#666', marginBottom: '6px' }}>Pick a starting point, then customize:</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  {PROGRAM_CONTENT[formData.troopType].whyJoinOptions.map((opt, i) => (
+                    <button key={i} onClick={() => handleInputChange('whyJoin', opt)}
+                      style={{ padding: '8px 12px', background: formData.whyJoin === opt ? (COLOR_SCHEMES[formData.colorScheme]?.primary || '#243E2C') : '#f5f5f5', color: formData.whyJoin === opt ? '#fff' : '#333', border: '1px solid #ddd', borderRadius: '6px', cursor: 'pointer', fontSize: '11px', textAlign: 'left', lineHeight: '1.4' }}>
+                      {opt.substring(0, 120)}...
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            <textarea style={{ ...styles.input, minHeight: '80px' }} placeholder="Pick a template above or write your own..." value={formData.whyJoin} onChange={(e) => handleInputChange('whyJoin', e.target.value)} />
+          </div>
+          <div style={styles.field}>
+            <label style={styles.label}>What is Scouting America?</label>
+            {PROGRAM_CONTENT[formData.troopType]?.whatIsScouting && !formData.whatIsScouting && (
+              <button onClick={() => handleInputChange('whatIsScouting', PROGRAM_CONTENT[formData.troopType].whatIsScouting)}
+                style={{ marginBottom: '6px', padding: '6px 12px', background: COLOR_SCHEMES[formData.colorScheme]?.primary || '#243E2C', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '11px', fontWeight: 600 }}>
+                ✨ Auto-fill for {formData.troopType}
+              </button>
+            )}
+            <textarea style={{ ...styles.input, minHeight: '80px' }} placeholder="Scouting America is a youth-led organization..." value={formData.whatIsScouting} onChange={(e) => handleInputChange('whatIsScouting', e.target.value)} />
+          </div>
           <div style={styles.field}><label style={styles.label}>Annual Costs / Dues</label>
             <input style={styles.input} placeholder="$150 national, $175 troop dues" value={formData.costs} onChange={(e) => handleInputChange('costs', e.target.value)} /></div>
           <div style={styles.field}>
-            <label style={styles.label}>Highlight Words (for word cloud on slide 1)</label>
+            <label style={styles.label}>Highlight Words (word cloud on slide 1)</label>
             <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
               <input style={{ ...styles.input, flex: 1 }} placeholder="e.g., Backpacking" value={highlightInput} onChange={(e) => setHighlightInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && addHighlight()} />
               <button onClick={addHighlight} style={styles.btnSecondary}>Add</button>
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
               {formData.highlights.map((h, i) => (
-                <span key={i} style={{ background: '#061A3A', color: '#F4B400', padding: '4px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: 600 }}>
-                  {h} <button onClick={() => removeHighlight(i)} style={{ background: 'none', border: 'none', color: '#F4B400', cursor: 'pointer', marginLeft: '4px' }}>×</button>
+                <span key={i} style={{ background: COLOR_SCHEMES[formData.colorScheme]?.primary || '#243E2C', color: COLOR_SCHEMES[formData.colorScheme]?.uiAccent || '#D4A843', padding: '4px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: 600 }}>
+                  {h} <button onClick={() => removeHighlight(i)} style={{ background: 'none', border: 'none', color: COLOR_SCHEMES[formData.colorScheme]?.uiAccent || '#D4A843', cursor: 'pointer', marginLeft: '4px' }}>×</button>
                 </span>
               ))}
             </div>
           </div>
           <div style={styles.field}>
-            <label style={styles.label}>Scout Activities (for slide 2 list)</label>
+            <label style={styles.label}>Scout Activities (slide 2 list)</label>
             <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
               <input style={{ ...styles.input, flex: 1 }} placeholder="e.g., Rock climbing" value={activityInput} onChange={(e) => setActivityInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && addActivity()} />
               <button onClick={addActivity} style={styles.btnSecondary}>Add</button>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
               {formData.activities.map((a, i) => (
-                <span key={i} style={{ background: '#f0f0f0', padding: '4px 10px', borderRadius: '4px', fontSize: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span key={i} style={{ background: '#f0f0f0', padding: '4px 10px', borderRadius: '4px', fontSize: '12px', display: 'flex', justifyContent: 'space-between' }}>
                   {a} <button onClick={() => removeActivity(i)} style={{ background: 'none', border: 'none', color: '#999', cursor: 'pointer' }}>×</button>
                 </span>
               ))}
@@ -506,62 +634,51 @@ const ScoutFlyerBuilder = () => {
       case 5: return (
         <div>
           <h2 style={styles.stepTitle}>Step 5: Images</h2>
+          <p style={{ fontSize: '12px', color: '#666', marginBottom: '12px' }}>Images are optional. Sections without images will be hidden automatically.</p>
           <div style={{ marginBottom: '16px', padding: '10px', background: '#f8f8f8', borderRadius: '6px' }}>
-            <label style={{ fontWeight: 600, fontSize: '13px', display: 'block', marginBottom: '6px' }}>Troop Logo (appears in top-right corner)</label>
+            <label style={{ fontWeight: 600, fontSize: '13px', display: 'block', marginBottom: '6px' }}>Troop Logo (top-right corner)</label>
             <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'logo')} style={{ fontSize: '12px' }} />
             {formData.logoImage && <p style={{ color: '#2E7D32', fontSize: '11px', marginTop: '4px' }}>✓ Logo uploaded</p>}
           </div>
-          <ImageSlot label="Hero Image (large banner photo)" imageType="hero" currentRef={formData.heroImageRef} currentImage={formData.heroImage} />
-          <h3 style={{ fontSize: '14px', color: '#061A3A', margin: '16px 0 8px' }}>Slide 1 Activity Photos (3 images)</h3>
-          {[0, 1, 2].map(i => <ImageSlot key={`act-${i}`} label={`Activity Photo ${i + 1}`} imageType="activity" index={i} currentRef={formData.activityImagesRef[i]} currentImage={formData.activityImages[i]} />)}
-          <h3 style={{ fontSize: '14px', color: '#061A3A', margin: '16px 0 8px' }}>Slide 2 Detail Photos (3 images)</h3>
-          {[0, 1, 2].map(i => <ImageSlot key={`det-${i}`} label={`Detail Photo ${i + 1}`} imageType="detail" index={i} currentRef={formData.detailImagesRef[i]} currentImage={formData.detailImages[i]} />)}
+          <ImageSlot label="Hero Image (large banner)" imageType="hero" currentRef={formData.heroImageRef} currentImage={formData.heroImage} />
+          <h3 style={{ fontSize: '14px', color: '#333', margin: '16px 0 8px' }}>Slide 1 Activity Photos (optional, up to 3)</h3>
+          {[0, 1, 2].map(i => <ImageSlot key={`a${i}`} label={`Activity Photo ${i+1}`} imageType="activity" index={i} currentRef={formData.activityImagesRef[i]} currentImage={formData.activityImages[i]} />)}
+          <h3 style={{ fontSize: '14px', color: '#333', margin: '16px 0 8px' }}>Slide 2 Detail Photos (optional, up to 3)</h3>
+          {[0, 1, 2].map(i => <ImageSlot key={`d${i}`} label={`Detail Photo ${i+1}`} imageType="detail" index={i} currentRef={formData.detailImagesRef[i]} currentImage={formData.detailImages[i]} />)}
         </div>
       );
       default: return null;
     }
   };
 
-  // ============================================================================
-  // MAIN RENDER
-  // ============================================================================
+  const cs = COLOR_SCHEMES[formData.colorScheme] || COLOR_SCHEMES.olive;
+
   return (
     <div style={{ minHeight: '100vh', background: '#f0f2f5', padding: '20px' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '24px', padding: '20px', background: '#061A3A', borderRadius: '12px', color: '#fff' }}>
-          <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#F4B400', margin: 0 }}>Scout Flyer Generator</h1>
-          <p style={{ color: '#D8E8FF', fontSize: '14px', marginTop: '6px' }}>Create a professional recruitment flyer for your Scout troop in minutes</p>
+        <div style={{ textAlign: 'center', marginBottom: '24px', padding: '20px', background: cs.primary, borderRadius: '12px', color: '#fff' }}>
+          <h1 style={{ fontSize: '28px', fontWeight: 800, color: cs.uiAccent, margin: 0 }}>Scout Flyer Generator</h1>
+          <p style={{ color: cs.secondaryText, fontSize: '14px', marginTop: '6px' }}>Create a professional recruitment flyer for your Scout troop in minutes</p>
         </div>
-
         <div style={{ display: 'grid', gridTemplateColumns: showPreview ? '400px 1fr' : '1fr', gap: '20px' }}>
-          {/* Form Panel */}
           <div>
             <div style={{ background: '#fff', padding: '24px', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
-              {/* Step indicators */}
               <div style={{ display: 'flex', gap: '6px', marginBottom: '20px' }}>
-                {[1, 2, 3, 4, 5].map(s => (
+                {[1,2,3,4,5].map(s => (
                   <button key={s} onClick={() => setStep(s)}
                     style={{ flex: 1, padding: '8px', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '11px', fontWeight: 600,
-                      background: step === s ? '#061A3A' : '#f0f0f0', color: step === s ? '#F4B400' : '#666' }}>
-                    {s}. {['Basics', 'Location', 'Contact', 'Content', 'Images'][s - 1]}
+                      background: step === s ? cs.primary : '#f0f0f0', color: step === s ? cs.accent : '#666' }}>
+                    {s}. {['Basics','Location','Contact','Content','Images'][s-1]}
                   </button>
                 ))}
               </div>
-
               {renderStep()}
-
-              {/* Navigation */}
               <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-                {step > 1 && <button onClick={() => setStep(step - 1)} style={styles.btnSecondary}>← Back</button>}
-                {step < 5 && <button onClick={() => setStep(step + 1)} style={styles.btnPrimary}>Next →</button>}
+                {step > 1 && <button onClick={() => setStep(step-1)} style={styles.btnSecondary}>← Back</button>}
+                {step < 5 && <button onClick={() => setStep(step+1)} style={{ padding: '8px 20px', background: cs.primary, color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '13px' }}>Next →</button>}
               </div>
-
-              {/* Action buttons */}
               <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <button onClick={() => setShowPreview(true)} style={{ ...styles.btnPrimary, width: '100%', padding: '12px', fontSize: '14px' }}>
-                  ✓ Generate Flyer Preview
-                </button>
+                <button onClick={() => setShowPreview(true)} style={{ width: '100%', padding: '14px', background: cs.primary, color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '15px', letterSpacing: '0.5px' }}>Generate Flyer Preview</button>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <button onClick={() => exportTemplate(formData)} style={{ ...styles.btnSecondary, flex: 1 }}>💾 Save Template</button>
                   <button onClick={() => templateInputRef.current?.click()} style={{ ...styles.btnSecondary, flex: 1 }}>📂 Load Template</button>
@@ -570,22 +687,24 @@ const ScoutFlyerBuilder = () => {
               </div>
             </div>
           </div>
-
-          {/* Preview Panel */}
           {showPreview && (
             <div>
               <div style={{ marginBottom: '12px', display: 'flex', gap: '8px', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <button onClick={downloadFlyer} style={{ ...styles.btnPrimary, padding: '10px 20px' }}>⬇️ Download HTML Flyer</button>
-                  <button onClick={() => { const html = generateHTML(formData); const w = window.open('', '_blank'); w.document.write(html); w.document.close(); }} style={styles.btnSecondary}>
-                    🔍 Full Preview
-                  </button>
+                  <button onClick={downloadFlyer} style={{ padding: '10px 20px', background: cs.primary, color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 700, fontSize: '13px' }}>⬇ Download HTML Flyer</button>
+                  <button onClick={() => { try { const html = generateHTML(formData); const w = window.open('','_blank'); w.document.write(html); w.document.close(); } catch(err) { alert('Preview error: ' + err.message); } }} style={styles.btnSecondary}>🔍 Full Preview</button>
                 </div>
                 <p style={{ fontSize: '11px', color: '#666' }}>Open HTML → Print (Ctrl+P) → Save as PDF</p>
               </div>
               <div style={{ background: '#fff', padding: '16px', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', maxHeight: '85vh', overflowY: 'auto' }}>
-                <iframe srcDoc={generateHTML(formData)} title="Flyer Preview"
-                  style={{ width: '100%', height: '800px', border: '1px solid #ddd', borderRadius: '8px' }} />
+                {(() => {
+                  try {
+                    const html = generateHTML(formData);
+                    return <iframe srcDoc={html} title="Preview" style={{ width: '100%', height: '800px', border: '1px solid #ddd', borderRadius: '8px' }} />;
+                  } catch (err) {
+                    return <div style={{ padding: '20px', color: 'red', background: '#fff0f0', borderRadius: '8px' }}>Preview error: {err.message}</div>;
+                  }
+                })()}
               </div>
             </div>
           )}
@@ -595,15 +714,12 @@ const ScoutFlyerBuilder = () => {
   );
 };
 
-// ============================================================================
-// STYLES
-// ============================================================================
 const styles = {
-  stepTitle: { color: '#061A3A', fontSize: '18px', fontWeight: 700, marginBottom: '16px' },
+  stepTitle: { color: '#333', fontSize: '18px', fontWeight: 700, marginBottom: '16px' },
   field: { marginBottom: '12px' },
   label: { display: 'block', fontWeight: 600, marginBottom: '4px', fontSize: '13px', color: '#333' },
   input: { width: '100%', padding: '8px 12px', border: '1px solid #ddd', borderRadius: '6px', fontSize: '14px', fontFamily: 'inherit', outline: 'none' },
-  btnPrimary: { padding: '8px 16px', background: '#061A3A', color: '#F4B400', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '13px' },
+  btnPrimary: { padding: '8px 16px', background: '#243E2C', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, fontSize: '13px' },
   btnSecondary: { padding: '8px 16px', background: '#f0f0f0', color: '#333', border: '1px solid #ddd', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' },
 };
 
