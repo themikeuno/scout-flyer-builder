@@ -2,7 +2,6 @@
 // All-in-one component with local storage of form state only, no image persistence
 
 import React, { useState, useRef } from 'react';
-import './App.css'; // Tailwind CSS imported here
 
 // ============================================================================
 // IMAGE LIBRARY - Curated Scout Imagery from Unsplash/Pexels
