@@ -1,6 +1,19 @@
 // SCOUT FLYER BUILDER v3.0 - Professional Design with Official Scouting America Colors
 import React, { useState, useRef, useEffect } from 'react';
 
+// HEIC to JPEG converter (loaded on demand for iPhone photo support)
+const convertHeicToJpeg = async (file) => {
+  if (!file.name?.toLowerCase().match(/\.heic$|\.heif$/)) return file;
+  try {
+    const heic2any = (await import('https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js')).default || window.heic2any;
+    const blob = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.85 });
+    return new File([blob], file.name.replace(/\.heic$/i, '.jpg').replace(/\.heif$/i, '.jpg'), { type: 'image/jpeg' });
+  } catch (err) {
+    console.warn('HEIC conversion failed, trying original:', err);
+    return file;
+  }
+};
+
 // ============================================================================
 // OFFICIAL SCOUTING AMERICA COLOR SCHEMES
 // Source: Scouting America Brand Guidelines, Rev. May 2024
@@ -116,12 +129,15 @@ const IMAGE_LIBRARY = {
 // ============================================================================
 // UTILITIES
 // ============================================================================
-const fileToBase64 = (file) => new Promise((resolve, reject) => {
-  const reader = new FileReader();
-  reader.onload = () => resolve(reader.result);
-  reader.onerror = (error) => reject(error);
-  reader.readAsDataURL(file);
-});
+const fileToBase64 = async (file) => {
+  const converted = await convertHeicToJpeg(file);
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+    reader.readAsDataURL(converted);
+  });
+};
 
 const exportTemplate = (formData) => {
   const template = {
@@ -452,7 +468,7 @@ const ScoutFlyerBuilder = () => {
           </button>
         ))}
       </div>
-      <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, imageType, index)} style={{ fontSize: '12px' }} />
+      <input type="file" accept="image/*,.heic,.heif" onChange={(e) => handleImageUpload(e, imageType, index)} style={{ fontSize: '12px' }} />
       {currentImage && <p style={{ color: '#2E7D32', fontSize: '11px', marginTop: '4px' }}>✓ Image selected</p>}
     </div>
   );
@@ -637,7 +653,7 @@ const ScoutFlyerBuilder = () => {
           <p style={{ fontSize: '12px', color: '#666', marginBottom: '12px' }}>Images are optional. Sections without images will be hidden automatically.</p>
           <div style={{ marginBottom: '16px', padding: '10px', background: '#f8f8f8', borderRadius: '6px' }}>
             <label style={{ fontWeight: 600, fontSize: '13px', display: 'block', marginBottom: '6px' }}>Troop Logo (top-right corner)</label>
-            <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'logo')} style={{ fontSize: '12px' }} />
+            <input type="file" accept="image/*,.heic,.heif" onChange={(e) => handleImageUpload(e, 'logo')} style={{ fontSize: '12px' }} />
             {formData.logoImage && <p style={{ color: '#2E7D32', fontSize: '11px', marginTop: '4px' }}>✓ Logo uploaded</p>}
           </div>
           <ImageSlot label="Hero Image (large banner)" imageType="hero" currentRef={formData.heroImageRef} currentImage={formData.heroImage} />
