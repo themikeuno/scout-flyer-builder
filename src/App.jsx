@@ -104,25 +104,30 @@ const PROGRAM_CONTENT = {
 // ============================================================================
 const IMAGE_LIBRARY = {
   hero: [
-    { id: 'hero_trail', name: 'Mountain Trail', url: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=1200&h=600&fit=crop', category: 'Hiking' },
-    { id: 'hero_camp', name: 'Camp at Sunset', url: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=1200&h=600&fit=crop', category: 'Camping' },
-    { id: 'hero_forest', name: 'Forest Path', url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=1200&h=600&fit=crop', category: 'Nature' },
-    { id: 'hero_lake', name: 'Lake Adventure', url: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1200&h=600&fit=crop', category: 'Outdoors' },
-    { id: 'hero_mountains', name: 'Mountain Vista', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&h=600&fit=crop', category: 'Mountains' },
+    { id: 'hero_trail', name: 'Mountain Trail', url: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=1200&h=600&fit=crop' },
+    { id: 'hero_camp', name: 'Camp at Sunset', url: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=1200&h=600&fit=crop' },
+    { id: 'hero_forest', name: 'Forest Path', url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=1200&h=600&fit=crop' },
+    { id: 'hero_lake', name: 'Lake Adventure', url: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1200&h=600&fit=crop' },
+    { id: 'hero_mountains', name: 'Mountain Vista', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&h=600&fit=crop' },
+    { id: 'hero_river', name: 'River Canyon', url: 'https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=1200&h=600&fit=crop' },
   ],
   activity: [
-    { id: 'act_hiking', name: 'Hiking Trail', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop', category: 'Hiking' },
-    { id: 'act_campfire', name: 'Campfire', url: 'https://images.unsplash.com/photo-1475483768296-6163e08872a1?w=600&h=400&fit=crop', category: 'Campfire' },
-    { id: 'act_tent', name: 'Tent Camping', url: 'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?w=600&h=400&fit=crop', category: 'Camping' },
-    { id: 'act_kayak', name: 'Kayaking', url: 'https://images.unsplash.com/photo-1472745433479-4556f22e32c2?w=600&h=400&fit=crop', category: 'Water' },
-    { id: 'act_climbing', name: 'Rock Climbing', url: 'https://images.unsplash.com/photo-1522163182402-834f871fd851?w=600&h=400&fit=crop', category: 'Adventure' },
-    { id: 'act_compass', name: 'Navigation', url: 'https://images.unsplash.com/photo-1452421822248-d4c2b47f0c81?w=600&h=400&fit=crop', category: 'Skills' },
-    { id: 'act_backpack', name: 'Backpacking', url: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=600&h=400&fit=crop', category: 'Backpacking' },
-    { id: 'act_forest', name: 'Forest Walk', url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&h=400&fit=crop', category: 'Nature' },
-    { id: 'act_cooking', name: 'Outdoor Cooking', url: 'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=600&h=400&fit=crop', category: 'Cooking' },
-    { id: 'act_team', name: 'Teamwork', url: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&h=400&fit=crop', category: 'Team' },
-    { id: 'act_stars', name: 'Stargazing', url: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=600&h=400&fit=crop', category: 'Night' },
-    { id: 'act_fishing', name: 'Fishing', url: 'https://images.unsplash.com/photo-1504309092620-4d0ec726efa4?w=600&h=400&fit=crop', category: 'Fishing' },
+    { id: 'act_hiking', name: 'Hiking', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop', cat: 'Hiking' },
+    { id: 'act_campfire', name: 'Campfire', url: 'https://images.unsplash.com/photo-1475483768296-6163e08872a1?w=600&h=400&fit=crop', cat: 'Campfire' },
+    { id: 'act_tent', name: 'Tent Camping', url: 'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?w=600&h=400&fit=crop', cat: 'Camping' },
+    { id: 'act_kayak', name: 'Kayaking', url: 'https://images.unsplash.com/photo-1472745433479-4556f22e32c2?w=600&h=400&fit=crop', cat: 'Water' },
+    { id: 'act_climbing', name: 'Rock Climbing', url: 'https://images.unsplash.com/photo-1522163182402-834f871fd851?w=600&h=400&fit=crop', cat: 'Adventure' },
+    { id: 'act_compass', name: 'Navigation', url: 'https://images.unsplash.com/photo-1452421822248-d4c2b47f0c81?w=600&h=400&fit=crop', cat: 'Skills' },
+    { id: 'act_backpack', name: 'Backpacking', url: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=600&h=400&fit=crop', cat: 'Backpacking' },
+    { id: 'act_forest', name: 'Forest Walk', url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&h=400&fit=crop', cat: 'Nature' },
+    { id: 'act_cooking', name: 'Camp Cooking', url: 'https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=600&h=400&fit=crop', cat: 'Cooking' },
+    { id: 'act_team', name: 'Teamwork', url: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&h=400&fit=crop', cat: 'Team' },
+    { id: 'act_stars', name: 'Stargazing', url: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=600&h=400&fit=crop', cat: 'Night' },
+    { id: 'act_fishing', name: 'Fishing', url: 'https://images.unsplash.com/photo-1504309092620-4d0ec726efa4?w=600&h=400&fit=crop', cat: 'Fishing' },
+    { id: 'act_knots', name: 'Rope Skills', url: 'https://images.unsplash.com/photo-1516571748831-5d461dd02b6c?w=600&h=400&fit=crop', cat: 'Skills' },
+    { id: 'act_canoe', name: 'Canoeing', url: 'https://images.unsplash.com/photo-1502780402662-acc01917889a?w=600&h=400&fit=crop', cat: 'Water' },
+    { id: 'act_service', name: 'Service', url: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=600&h=400&fit=crop', cat: 'Service' },
+    { id: 'act_flag', name: 'Flag Ceremony', url: 'https://images.unsplash.com/photo-1569429593410-b498b3fb3387?w=600&h=400&fit=crop', cat: 'Ceremony' },
   ]
 };
 
@@ -146,7 +151,7 @@ const exportTemplate = (formData) => {
     meetingLocation: { day: formData.meetingDay, time: formData.meetingTime, endTime: formData.meetingEndTime, frequency: formData.meetingFrequency, frequencyCustom: formData.meetingFrequencyCustom, address: formData.address, locationName: formData.locationName },
     contact: { email: formData.email, website: formData.website, instagram: formData.instagram, phone: formData.phone },
     description: { whyJoin: formData.whyJoin, whatIsScouting: formData.whatIsScouting, highlights: formData.highlights, costs: formData.costs, activities: formData.activities },
-    design: { colorScheme: formData.colorScheme, customColors: formData.colorScheme === 'custom' ? COLOR_SCHEMES.custom : null },
+    design: { colorScheme: formData.colorScheme, imageAdjustments: formData.imageAdjustments, customColors: formData.colorScheme === 'custom' ? COLOR_SCHEMES.custom : null },
     images: { hero: formData.heroImageRef, activityGallery: formData.activityImagesRef, detailGallery: formData.detailImagesRef, logo: formData.logoImageRef }
   };
   const el = document.createElement('a');
@@ -199,12 +204,12 @@ const generateHTML = (formData) => {
   // Build photo grid HTML only if images exist
   const photoGridHTML = actImgs.length > 0 ? `
   <div style="display:grid;grid-template-columns:repeat(${actImgs.length},1fr);gap:0;padding:0 0.42in;height:1.78in;">
-    ${actImgs.map(img => `<div style="position:relative;overflow:hidden;border-radius:8px;margin:0 4px;"><img src="${img}" style="width:100%;height:100%;object-fit:cover;" alt="Activity"><div style="position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.1);border-radius:8px;"></div></div>`).join('')}
+    ${actImgs.map((img, idx) => { const a = formData.imageAdjustments?.['activity_' + idx] || {zoom:100,posX:50,posY:50}; return `<div style="position:relative;overflow:hidden;border-radius:8px;margin:0 4px;"><div style="width:100%;height:100%;background-image:url(${img});background-size:${a.zoom}%;background-position:${a.posX}% ${a.posY}%;background-repeat:no-repeat;"></div><div style="position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.1);border-radius:8px;"></div></div>`; }).join('')}
   </div>` : '';
 
   const detailPhotosHTML = detImgs.length > 0 ? `
   <div style="display:grid;grid-template-columns:repeat(${detImgs.length},1fr);gap:0;padding:0.2in 0.42in;height:1.4in;">
-    ${detImgs.map(img => `<div style="position:relative;overflow:hidden;border-radius:8px;margin:0 4px;"><img src="${img}" style="width:100%;height:100%;object-fit:cover;" alt="Activity"><div style="position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.1);border-radius:8px;"></div></div>`).join('')}
+    ${detImgs.map((img, idx) => { const a = formData.imageAdjustments?.['detail_' + idx] || {zoom:100,posX:50,posY:50}; return `<div style="position:relative;overflow:hidden;border-radius:8px;margin:0 4px;"><div style="width:100%;height:100%;background-image:url(${img});background-size:${a.zoom}%;background-position:${a.posX}% ${a.posY}%;background-repeat:no-repeat;"></div><div style="position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.1);border-radius:8px;"></div></div>`; }).join('')}
   </div>` : '';
 
   return `<!DOCTYPE html>
@@ -271,7 +276,7 @@ ${hasHero ? `.hero-section img{width:100%;height:100%;object-fit:cover;}` : ''}
 
 <div class="slide slide-1">
   <div class="hero-section">
-    ${hasHero ? `<img src="${heroImg}" alt="${formData.troopName}">` : ''}
+    ${hasHero ? `<div style="width:100%;height:100%;background-image:url(${heroImg});background-size:${(formData.imageAdjustments?.hero?.zoom || 100)}%;background-position:${(formData.imageAdjustments?.hero?.posX || 50)}% ${(formData.imageAdjustments?.hero?.posY || 50)}%;background-repeat:no-repeat;"></div>` : ''}
     <div class="hero-overlay">
       <div class="hero-tagline">Adventure starts here.</div>
       <div class="hero-subtitle">Scouting America &nbsp;•&nbsp; ${formData.troopType || 'Scouts BSA'} ${formData.ageRange || 'Ages 11-17'}</div>
@@ -366,6 +371,7 @@ const ScoutFlyerBuilder = () => {
     activities: ['Monthly camping trips', 'Hiking & backpacking adventures', 'Community service projects', 'Leadership & merit badge training', 'Summer camp experiences', 'Outdoor skills development'],
     colorScheme: 'olive',
     heroImage: '', heroImageRef: '', logoImage: '', logoImageRef: '',
+    imageAdjustments: {},
     activityImages: [null, null, null], activityImagesRef: ['', '', ''],
     detailImages: [null, null, null], detailImagesRef: ['', '', ''],
   });
@@ -389,6 +395,10 @@ const ScoutFlyerBuilder = () => {
   }, [formData.troopType]);
 
   const handleInputChange = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
+  const getAdj = (key) => formData.imageAdjustments[key] || { zoom: 100, posX: 50, posY: 50 };
+  const setAdj = (key, field, value) => setFormData(prev => ({
+    ...prev, imageAdjustments: { ...prev.imageAdjustments, [key]: { ...getAdj(key), [field]: value } }
+  }));
   const addHighlight = () => { if (highlightInput.trim()) { setFormData(prev => ({ ...prev, highlights: [...prev.highlights, highlightInput.trim()] })); setHighlightInput(''); } };
   const removeHighlight = (i) => setFormData(prev => ({ ...prev, highlights: prev.highlights.filter((_, idx) => idx !== i) }));
   const addActivity = () => { if (activityInput.trim()) { setFormData(prev => ({ ...prev, activities: [...prev.activities, activityInput.trim()] })); setActivityInput(''); } };
@@ -446,7 +456,7 @@ const ScoutFlyerBuilder = () => {
         email: t.contact.email, website: t.contact.website, instagram: t.contact.instagram, phone: t.contact.phone,
         whyJoin: t.description.whyJoin, whatIsScouting: t.description.whatIsScouting, highlights: t.description.highlights, costs: t.description.costs,
         activities: t.description.activities || prev.activities,
-        colorScheme: t.design?.colorScheme || getRecommendedScheme(t.troopBasics.troopType),
+        colorScheme: t.design?.colorScheme || getRecommendedScheme(t.troopBasics.troopType), imageAdjustments: t.design?.imageAdjustments || {},
         heroImageRef: t.images.hero, activityImagesRef: t.images.activityGallery, detailImagesRef: t.images.detailGallery, logoImageRef: t.images.logo || '',
       }));
       if (t.design?.customColors) { Object.assign(COLOR_SCHEMES.custom, t.design.customColors); }
@@ -457,7 +467,10 @@ const ScoutFlyerBuilder = () => {
   // ============================================================================
   // IMAGE PICKER
   // ============================================================================
-  const ImageSlot = ({ label, imageType, index, currentRef, currentImage }) => (
+  const ImageSlot = ({ label, imageType, index, currentRef, currentImage }) => {
+    const adjKey = index !== null && index !== undefined ? imageType + '_' + index : imageType;
+    const adj = getAdj(adjKey);
+    return (
     <div style={{ marginBottom: '12px', padding: '10px', background: '#f8f8f8', borderRadius: '6px' }}>
       <label style={{ fontWeight: 600, fontSize: '13px', display: 'block', marginBottom: '6px' }}>{label}</label>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px', marginBottom: '8px' }}>
@@ -469,9 +482,27 @@ const ScoutFlyerBuilder = () => {
         ))}
       </div>
       <input type="file" accept="image/*,.heic,.heif" onChange={(e) => handleImageUpload(e, imageType, index)} style={{ fontSize: '12px' }} />
-      {currentImage && <p style={{ color: '#2E7D32', fontSize: '11px', marginTop: '4px' }}>✓ Image selected</p>}
+      {currentImage && (
+        <div style={{ marginTop: '8px' }}>
+          <div style={{ width: '100%', height: imageType === 'hero' ? '120px' : '80px', borderRadius: '6px', overflow: 'hidden', border: '1px solid #ddd', marginBottom: '6px' }}>
+            <div style={{ width: '100%', height: '100%', backgroundImage: `url(${currentImage})`, backgroundSize: `${adj.zoom}%`, backgroundPosition: `${adj.posX}% ${adj.posY}%`, backgroundRepeat: 'no-repeat' }} />
+          </div>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '11px', color: '#666' }}>
+            <span style={{ width: '35px' }}>Zoom</span>
+            <input type="range" min="100" max="300" value={adj.zoom} onChange={(e) => setAdj(adjKey, 'zoom', Number(e.target.value))} style={{ flex: 1 }} />
+          </div>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '11px', color: '#666' }}>
+            <span style={{ width: '35px' }}>Left/Right</span>
+            <input type="range" min="0" max="100" value={adj.posX} onChange={(e) => setAdj(adjKey, 'posX', Number(e.target.value))} style={{ flex: 1 }} />
+          </div>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '11px', color: '#666' }}>
+            <span style={{ width: '35px' }}>Up/Down</span>
+            <input type="range" min="0" max="100" value={adj.posY} onChange={(e) => setAdj(adjKey, 'posY', Number(e.target.value))} style={{ flex: 1 }} />
+          </div>
+        </div>
+      )}
     </div>
-  );
+  );};
 
   // ============================================================================
   // COLOR SCHEME PICKER
@@ -650,7 +681,13 @@ const ScoutFlyerBuilder = () => {
       case 5: return (
         <div>
           <h2 style={styles.stepTitle}>Step 5: Images</h2>
-          <p style={{ fontSize: '12px', color: '#666', marginBottom: '12px' }}>Images are optional. Sections without images will be hidden automatically.</p>
+          <p style={{ fontSize: '12px', color: '#666', marginBottom: '8px' }}>Images are optional. Sections without images will be hidden automatically.</p>
+          <div style={{ padding: '10px 12px', background: '#EEF6FF', borderRadius: '8px', marginBottom: '14px', border: '1px solid #B8D4F0' }}>
+            <div style={{ fontSize: '12px', fontWeight: 700, color: '#003F87', marginBottom: '4px' }}>Looking for official Scouting America photos?</div>
+            <p style={{ fontSize: '11px', color: '#444', lineHeight: '1.5', margin: 0 }}>
+              Visit the <a href="https://scouting.webdamdb.com/bp/#/" target="_blank" rel="noopener noreferrer" style={{ color: '#003F87', fontWeight: 600 }}>Scouting America Brand Center</a> to browse and download official photos, logos, and graphics. Download what you need, then upload them here. Free registration required.
+            </p>
+          </div>
           <div style={{ marginBottom: '16px', padding: '10px', background: '#f8f8f8', borderRadius: '6px' }}>
             <label style={{ fontWeight: 600, fontSize: '13px', display: 'block', marginBottom: '6px' }}>Troop Logo (top-right corner)</label>
             <input type="file" accept="image/*,.heic,.heif" onChange={(e) => handleImageUpload(e, 'logo')} style={{ fontSize: '12px' }} />
