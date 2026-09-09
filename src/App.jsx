@@ -470,6 +470,68 @@ const ScoutFlyerBuilder = () => {
   const ImageSlot = ({ label, imageType, index, currentRef, currentImage }) => {
     const adjKey = index !== null && index !== undefined ? imageType + '_' + index : imageType;
     const adj = getAdj(adjKey);
+    const dragRef = useRef({ dragging: false, startX: 0, startY: 0, startPosX: 0, startPosY: 0, lastPinchDist: 0 });
+
+    const handlePointerDown = (e) => {
+      e.preventDefault();
+      const d = dragRef.current;
+      d.dragging = true;
+      d.startX = e.clientX || e.touches?.[0]?.clientX || 0;
+      d.startY = e.clientY || e.touches?.[0]?.clientY || 0;
+      d.startPosX = adj.posX;
+      d.startPosY = adj.posY;
+    };
+
+    const handlePointerMove = (e) => {
+      const d = dragRef.current;
+      if (!d.dragging) return;
+      e.preventDefault();
+      const clientX = e.clientX || e.touches?.[0]?.clientX || 0;
+      const clientY = e.clientY || e.touches?.[0]?.clientY || 0;
+      const sensitivity = 200 / adj.zoom;
+      const dx = (d.startX - clientX) * sensitivity;
+      const dy = (d.startY - clientY) * sensitivity;
+      setAdj(adjKey, 'posX', Math.max(0, Math.min(100, d.startPosX + dx)));
+      setAdj(adjKey, 'posY', Math.max(0, Math.min(100, d.startPosY + dy)));
+    };
+
+    const handlePointerUp = () => { dragRef.current.dragging = false; };
+
+    const handleWheel = (e) => {
+      e.preventDefault();
+      const newZoom = Math.max(100, Math.min(300, adj.zoom + (e.deltaY > 0 ? -10 : 10)));
+      setAdj(adjKey, 'zoom', newZoom);
+    };
+
+    const handleTouchStart = (e) => {
+      if (e.touches.length === 2) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        dragRef.current.lastPinchDist = Math.sqrt(dx * dx + dy * dy);
+      } else if (e.touches.length === 1) {
+        handlePointerDown({ preventDefault: () => {}, clientX: e.touches[0].clientX, clientY: e.touches[0].clientY });
+      }
+    };
+
+    const handleTouchMove = (e) => {
+      if (e.touches.length === 2) {
+        e.preventDefault();
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const diff = dist - dragRef.current.lastPinchDist;
+        const newZoom = Math.max(100, Math.min(300, adj.zoom + diff * 0.5));
+        setAdj(adjKey, 'zoom', newZoom);
+        dragRef.current.lastPinchDist = dist;
+      } else if (e.touches.length === 1 && dragRef.current.dragging) {
+        handlePointerMove({ preventDefault: () => {}, clientX: e.touches[0].clientX, clientY: e.touches[0].clientY });
+      }
+    };
+
+    const resetAdj = () => setFormData(prev => ({
+      ...prev, imageAdjustments: { ...prev.imageAdjustments, [adjKey]: { zoom: 100, posX: 50, posY: 50 } }
+    }));
+
     return (
     <div style={{ marginBottom: '12px', padding: '10px', background: '#f8f8f8', borderRadius: '6px' }}>
       <label style={{ fontWeight: 600, fontSize: '13px', display: 'block', marginBottom: '6px' }}>{label}</label>
@@ -484,25 +546,26 @@ const ScoutFlyerBuilder = () => {
       <input type="file" accept="image/*,.heic,.heif" onChange={(e) => handleImageUpload(e, imageType, index)} style={{ fontSize: '12px' }} />
       {currentImage && (
         <div style={{ marginTop: '8px' }}>
-          <div style={{ width: '100%', height: imageType === 'hero' ? '120px' : '80px', borderRadius: '6px', overflow: 'hidden', border: '1px solid #ddd', marginBottom: '6px' }}>
-            <div style={{ width: '100%', height: '100%', backgroundImage: `url(${currentImage})`, backgroundSize: `${adj.zoom}%`, backgroundPosition: `${adj.posX}% ${adj.posY}%`, backgroundRepeat: 'no-repeat' }} />
+          <div
+            onMouseDown={handlePointerDown} onMouseMove={handlePointerMove} onMouseUp={handlePointerUp} onMouseLeave={handlePointerUp}
+            onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handlePointerUp}
+            onWheel={handleWheel}
+            style={{ width: '100%', height: imageType === 'hero' ? '140px' : '90px', borderRadius: '6px', overflow: 'hidden', border: '2px solid #ccc', marginBottom: '6px', cursor: 'grab', touchAction: 'none', userSelect: 'none', position: 'relative' }}>
+            <div style={{ width: '100%', height: '100%', backgroundImage: `url(${currentImage})`, backgroundSize: `${adj.zoom}%`, backgroundPosition: `${adj.posX}% ${adj.posY}%`, backgroundRepeat: 'no-repeat', pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', bottom: '4px', left: '4px', background: 'rgba(0,0,0,0.55)', color: '#fff', fontSize: '9px', padding: '2px 6px', borderRadius: '3px', pointerEvents: 'none' }}>
+              {adj.zoom > 100 ? `${adj.zoom}% — drag to reposition` : 'Scroll to zoom, drag to move'}
+            </div>
           </div>
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '11px', color: '#666' }}>
-            <span style={{ width: '35px' }}>Zoom</span>
-            <input type="range" min="100" max="300" value={adj.zoom} onChange={(e) => setAdj(adjKey, 'zoom', Number(e.target.value))} style={{ flex: 1 }} />
-          </div>
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '11px', color: '#666' }}>
-            <span style={{ width: '35px' }}>Left/Right</span>
-            <input type="range" min="0" max="100" value={adj.posX} onChange={(e) => setAdj(adjKey, 'posX', Number(e.target.value))} style={{ flex: 1 }} />
-          </div>
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '11px', color: '#666' }}>
-            <span style={{ width: '35px' }}>Up/Down</span>
-            <input type="range" min="0" max="100" value={adj.posY} onChange={(e) => setAdj(adjKey, 'posY', Number(e.target.value))} style={{ flex: 1 }} />
+          <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+            <input type="range" min="100" max="300" value={adj.zoom} onChange={(e) => setAdj(adjKey, 'zoom', Number(e.target.value))} style={{ flex: 1 }} title="Zoom" />
+            <span style={{ fontSize: '10px', color: '#888', width: '35px' }}>{adj.zoom}%</span>
+            <button onClick={resetAdj} style={{ fontSize: '10px', padding: '3px 8px', background: '#eee', border: '1px solid #ccc', borderRadius: '4px', cursor: 'pointer', color: '#666', whiteSpace: 'nowrap' }}>Reset</button>
           </div>
         </div>
       )}
     </div>
   );};
+
 
   // ============================================================================
   // COLOR SCHEME PICKER
